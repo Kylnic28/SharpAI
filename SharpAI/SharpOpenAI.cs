@@ -88,7 +88,7 @@ namespace SharpAI
             using var requestMessage = PrepareRequest(url, false, dataToSend);
             var apiResponse = await client.SendAsync(requestMessage);
             var apiStream = await apiResponse.Content.ReadAsStreamAsync();
-            
+
             return apiStream;
 
         }
@@ -152,7 +152,8 @@ namespace SharpAI
                     if (getUrls is null)
                         throw new NullReferenceException(nameof(getUrls));
 
-                    return string.Join(",", getUrls);
+                    output = string.Join(",", getUrls);
+                    break;
             }
 
             return output.Trim();
