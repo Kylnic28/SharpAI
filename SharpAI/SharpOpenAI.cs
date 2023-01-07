@@ -13,10 +13,9 @@ namespace SharpAI
 {
     public class SharpOpenAI
     {
-        private static HttpClient client;
+        private static HttpClient? client;
         public SharpOpenAI()
         {
-
             client = new HttpClient();
         }
         private HttpRequestMessage PrepareRequest<T>(string url, bool get = true, T? dataToSend = null) where T : class
@@ -115,8 +114,17 @@ namespace SharpAI
 
         }
 
+        /// <summary>
+        /// Ask to AI
+        /// </summary>
+        /// <typeparam name="T">Data Type.</typeparam>
+        /// <param name="module">Module that will be used.</param>
+        /// <param name="data">Data that will be sent.</param>
+        /// <returns>Answer, images, etc.</returns>
+        /// <exception cref="JsonException"></exception>
+        /// <exception cref="NullReferenceException"></exception>
         public async Task<string> AskToAI<T>(AIModules module, T data) where T : class
-        {
+        {            
             string output = string.Empty;
 
             switch (module)

@@ -4,4 +4,3 @@ using SharpAI.API;
 using SharpAI.Configuration;
 using System.Text.Json;
 using static SharpAI.API.AIModules;
-Console.WriteLine("Hello World!");
