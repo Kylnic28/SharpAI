@@ -91,7 +91,7 @@ namespace SharpAI.API
         /// </summary>
 
         [JsonPropertyName("stop")]
-        public string? Stop { get; set; } = "\n";
+        public string? Stop { get; set; } = null;
 
         /// <summary>
         /// Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
@@ -141,7 +141,6 @@ namespace SharpAI.API
 
     public class CompletionResponse
     {
-
         [JsonPropertyName("id")]
         public string? Identifier { get; set; }
 
@@ -155,7 +154,7 @@ namespace SharpAI.API
         public List<CompletionChoice>? Choices { get; set; }
 
         [JsonPropertyName("usage")]
-        public CompletionUsage Usage { get; set; }
+        public CompletionUsage? Usage { get; set; }
     }
 
     public class CompletionUsage

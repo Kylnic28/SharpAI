@@ -1,19 +1,16 @@
 ﻿using SharpAI.API;
 using SharpAI.Configuration;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using static SharpAI.API.Constants;
 using static SharpAI.API.AIModules;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text.Json.Serialization;
 
 namespace SharpAI
 {
     public class SharpOpenAI
     {
-        private static HttpClient? client;
+        private HttpClient client;
         public SharpOpenAI()
         {
             client = new HttpClient();
@@ -88,6 +85,14 @@ namespace SharpAI
             var apiResponse = await client.SendAsync(requestMessage);
             var apiStream = await apiResponse.Content.ReadAsStreamAsync();
 
+            if (!apiResponse.IsSuccessStatusCode)
+            {
+
+                var currentStatus = new StreamReader(apiStream).ReadToEnd();
+                throw new HttpRequestException(currentStatus);
+            }
+
+
             return apiStream;
 
         }
@@ -124,14 +129,16 @@ namespace SharpAI
         /// <exception cref="JsonException"></exception>
         /// <exception cref="NullReferenceException"></exception>
         public async Task<string> AskToAI<T>(AIModules module, T data) where T : class
-        {            
+        {
             string output = string.Empty;
 
             switch (module)
             {
                 case TextGenerationModule:
-                    var completionResponse = await Post<T>(data);
-                    var deserializedCompletionResponse = await JsonSerializer.DeserializeAsync<CompletionResponse>(completionResponse);
+                    var d = data as Completion;
+                    var completionResponse = await Post(data);
+
+                    var deserializedCompletionResponse = await JsonSerializer.DeserializeAsync<CompletionResponse>(completionResponse, new JsonSerializerOptions() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
 
                     if (deserializedCompletionResponse is null)
                         throw new JsonException("Deserialized content is null.");
@@ -140,8 +147,14 @@ namespace SharpAI
 
                     if (tokens is not null)
                     {
-                        foreach (var token in tokens)
-                            output += token.ToString();
+                        int index = 0;
+
+                        while (tokens[index] != "<|endoftext|>") // hack fix^tm
+                        {
+                            output += tokens[index];
+                            index++;
+
+                        }
                     }
                     else
                         return "EMPTY_REQUEST";
