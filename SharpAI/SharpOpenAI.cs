@@ -87,7 +87,6 @@ namespace SharpAI
 
             if (!apiResponse.IsSuccessStatusCode)
             {
-
                 var currentStatus = new StreamReader(apiStream).ReadToEnd();
                 throw new HttpRequestException(currentStatus);
             }
@@ -147,13 +146,12 @@ namespace SharpAI
 
                     if (tokens is not null)
                     {
-                        int index = 0;
-
-                        while (tokens[index] != "<|endoftext|>") // hack fix^tm
+                        foreach(var token in tokens)
                         {
-                            output += tokens[index];
-                            index++;
+                            if (token.Equals("<|endoftext|>")) // if stop settings is set to null.
+                                break;
 
+                            output += token;
                         }
                     }
                     else

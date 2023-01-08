@@ -7,8 +7,9 @@ SharpOpenAI ai = new();
 
 Completion completion = new Completion()
 {
-    Prompt = "Why StackOverflow is considered as a Bible for developers?",
-    MaxTokens = 2048/2,
+    Model = "text-davinci-003",
+    Prompt = "Calculator in C#",
+    MaxTokens = 256,
     Temperature = 0,
     TopP = 1,
     FrequencePenalty = 0,
