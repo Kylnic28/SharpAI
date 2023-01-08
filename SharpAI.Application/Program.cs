@@ -5,18 +5,27 @@ using static SharpAI.API.AIModules;
 
 SharpOpenAI ai = new();
 
+
 Completion completion = new Completion()
 {
     Model = "text-davinci-003",
-    Prompt = "Calculator in C#",
-    MaxTokens = 256,
-    Temperature = 0,
-    TopP = 1,
+    Prompt = "Explain me what is Stackoverflow.",
+    MaxTokens = 4000,
+    Temperature = 0.9f,
+    TopP = 0,
     FrequencePenalty = 0,
     PresencePenalty = 0,
     Stop = null
 };
 
+Image image = new()
+{
+    Prompt = "Anakin Skywalker as a communist, under the red flag, realistic",
+    Number = 1,
+    ResponseFormat = "url",
+    Size = "1024x1024"
+};
 
-var answer = await ai.AskToAI(TextGenerationModule, completion);
+
+var answer = await ai.AskToAI(completion);
 Console.WriteLine(answer);

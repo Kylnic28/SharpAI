@@ -11,6 +11,7 @@ namespace SharpAI
     public class SharpOpenAI
     {
         private HttpClient client;
+        public HttpClient Client { get { return client; } set { client = value; } }
         public SharpOpenAI()
         {
             client = new HttpClient();
@@ -122,18 +123,19 @@ namespace SharpAI
         /// Ask to AI
         /// </summary>
         /// <typeparam name="T">Data Type.</typeparam>
-        /// <param name="module">Module that will be used.</param>
         /// <param name="data">Data that will be sent.</param>
         /// <returns>Answer, images, etc.</returns>
         /// <exception cref="JsonException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        public async Task<string> AskToAI<T>(AIModules module, T data) where T : class
+        public async Task<string> AskToAI<T>(T data, bool saveToFile = false) where T : class
         {
             string output = string.Empty;
+            Type t = typeof(T);
 
-            switch (module)
+            switch (t)
             {
-                case TextGenerationModule:
+                case Type _ when t == typeof(Completion):
+
                     var d = data as Completion;
                     var completionResponse = await Post(data);
 
@@ -159,8 +161,9 @@ namespace SharpAI
 
                     break;
 
-                case ImageGenerationModule:
-                    var imageResponse = await Post<T>(data);
+                case Type _ when t == typeof(Image):
+
+                    var imageResponse = await Post(data);
                     var deserializedImageResponse = await JsonSerializer.DeserializeAsync<ImageResponse>(imageResponse);
 
                     if (deserializedImageResponse is null)
@@ -173,10 +176,17 @@ namespace SharpAI
 
                     output = string.Join(",", getUrls);
                     break;
+
+                default:
+                    throw new NotImplementedException($"{nameof(t)} isn't implemented or supported yet.");
             }
+
+            if (saveToFile)
+                File.WriteAllText("output.txt", output);
 
             return output.Trim();
         }
+
 
 
     }
