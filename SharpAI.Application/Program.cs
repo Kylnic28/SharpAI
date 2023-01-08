@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using SharpAI;
 using SharpAI.API;
-using static SharpAI.API.AIModules;
 
 SharpOpenAI ai = new();
 
@@ -15,7 +14,7 @@ Completion completion = new Completion()
     TopP = 0,
     FrequencePenalty = 0,
     PresencePenalty = 0,
-    Stop = null
+    Stop = nulls
 };
 
 Image image = new()

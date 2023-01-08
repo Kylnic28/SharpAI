@@ -132,14 +132,13 @@ namespace SharpAI
             string output = string.Empty;
             Type t = typeof(T);
 
+            var response = await Post(data);
+
             switch (t)
             {
                 case Type _ when t == typeof(Completion):
-
-                    var d = data as Completion;
-                    var completionResponse = await Post(data);
-
-                    var deserializedCompletionResponse = await JsonSerializer.DeserializeAsync<CompletionResponse>(completionResponse, new JsonSerializerOptions() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
+;
+                    var deserializedCompletionResponse = await JsonSerializer.DeserializeAsync<CompletionResponse>(response, new JsonSerializerOptions() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
 
                     if (deserializedCompletionResponse is null)
                         throw new JsonException("Deserialized content is null.");
@@ -163,8 +162,7 @@ namespace SharpAI
 
                 case Type _ when t == typeof(Image):
 
-                    var imageResponse = await Post(data);
-                    var deserializedImageResponse = await JsonSerializer.DeserializeAsync<ImageResponse>(imageResponse);
+                    var deserializedImageResponse = await JsonSerializer.DeserializeAsync<ImageResponse>(response);
 
                     if (deserializedImageResponse is null)
                         throw new JsonException("Deserialized content is null.");
